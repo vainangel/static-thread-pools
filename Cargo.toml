@@ -1,0 +1,12 @@
+[package]
+name = "td"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+fifo_pool = []
+pqueue_pool = []
+
+[dependencies]
+priority-queue = "2.7.0"
+rand = "0.10.1"
