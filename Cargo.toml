@@ -11,3 +11,4 @@ dynamic_pool = []
 [dependencies]
 priority-queue = "2.7.0"
 rand = "0.10.1"
+regex = "1.12.3"

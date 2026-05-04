@@ -2,6 +2,7 @@ use rand::rngs::StdRng;
 use rand::SeedableRng;
 use rand::prelude::*;
 use rand::distr::weighted::WeightedIndex;
+use regex::Regex;
 use std::env;
 
 use std::time::{Duration, SystemTime};
@@ -47,7 +48,22 @@ fn main() {
     // amendments)
 
     let arrival_time_0 = SystemTime::now() + Duration::new(5, 0);
-    let dist_taskkind = WeightedIndex::new(&[7, 3]).unwrap();
+
+    let dist_taskkind: WeightedIndex<i32> = match env::var("DIST") {
+        Ok(dist_string) => { 
+            match Regex::new(r"([0-9]+)\:([0-9]+)").unwrap().captures(dist_string.as_str()) {
+                Some(captures) => {
+                    let ratio_cpu = i32::from_str_radix(&captures[1], 10).unwrap();
+                    let ratio_io = i32::from_str_radix(&captures[2], 10).unwrap();
+
+                    Ok(WeightedIndex::new(&[ratio_cpu, ratio_io]).unwrap())
+                },
+                _ => Err("Format of parameter DIST is invalid (should be x:y)")
+            }
+        },
+        _ => Ok(WeightedIndex::new(&[7, 3]).unwrap())
+    }.unwrap();
+
     let mut arrival_time_offset_20ms = 0;
 
     for id in 1..=tasks_total {
