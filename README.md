@@ -8,17 +8,17 @@ This project implements:
 # Building and Running 
 To test a specific implementation:
 ```sh
-cargo run --features fifo_pool # runs the basic fifo tests 
-cargo run --features dynamic_pool # runs the round robin scheduler tests
+cargo run --no-default-features --features fifo_pool # runs the basic fifo tests 
+cargo run --no-default-features --features dynamic_pool # runs the round robin scheduler tests
 ```
 
 To summarize the data:
 ```sh
-cargo run --features <type> > out.txt
+cargo run --no-default-features --features <type> > out.txt
 python3 analyze.py out.txt > results_<type>.txt
 ```
 
-To automate this process for both tests:
+To automate this process for all implementation tests:
 ```sh
 python3 run_tests.py
 ```
