@@ -3,13 +3,13 @@ This project explores two types of task scheduling methods. The project constrai
 
 This project implements:
 - A FIFO pool: Tasks are unqueued as soon as (possible as) they're queued 
-- A priority queue pool: Tasks are sorted by task type (heavier tasks are executed first) to free up resources sooner.
+- A round robin queue scheduler: Tasks are executed for some quantum of time per iteration and re-queued until they are complete.
 
 # Building and Running 
 To test a specific implementation:
 ```sh
 cargo run --features fifo_pool # runs the basic fifo tests 
-cargo run --features pqueue_pool # runs the priority queue tests
+cargo run --features dynamic_pool # runs the round robin scheduler tests
 ```
 
 To summarize the data:

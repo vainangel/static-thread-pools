@@ -5,7 +5,7 @@ edition = "2024"
 
 [features]
 fifo_pool = []
-pqueue_pool = []
+dynamic_pool = []
 
 [dependencies]
 priority-queue = "2.7.0"

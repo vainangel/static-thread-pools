@@ -2,6 +2,7 @@ use rand::rngs::StdRng;
 use rand::SeedableRng;
 use rand::prelude::*;
 use rand::distr::weighted::WeightedIndex;
+use std::env;
 
 use std::time::{Duration, SystemTime};
 
@@ -21,31 +22,32 @@ macro_rules! query_type {
     () => { WorkerPool };
 }
 
-#[cfg(feature = "pqueue_pool")]
+#[cfg(feature = "dynamic_pool")]
 macro_rules! query_type {
     () => { DynamicWorkerPool };
 }
 
-#[cfg(not(any(feature = "fifo_pool", feature = "pqueue_pool")))]
+#[cfg(not(any(feature = "fifo_pool", feature = "dynamic_pool")))]
 macro_rules! query_type {
     () => {
         compile_error!("Must specify --features fifo_pool or --features pqueue_pool !");
     }
 }
 
-#[cfg(all(feature = "fifo_pool", feature = "pqueue_pool"))]
-compile_error!("Features 'fifo_pool' and 'pqueue_pool' are mutually exclusive.");
+#[cfg(all(feature = "fifo_pool", feature = "dynamic_pool"))]
+compile_error!("Features 'fifo_pool' and 'dynamic_pool' are mutually exclusive.");
 
 fn main() {
     let seed: u64 = 123456;
     let mut rng = StdRng::seed_from_u64(seed);
     
     let mut tasks = vec![];
-    let tasks_total = 1000; // make sure to set this to 1,000 for final tests (required by rubric in
+    let tasks_total = i32::from_str_radix(env::var("TASKS").unwrap_or_else(|_| "1000".to_string()).as_str(), 10).unwrap(); 
+    // make sure to set this to 1,000 for final tests (required by rubric in
     // amendments)
 
     let arrival_time_0 = SystemTime::now() + Duration::new(5, 0);
-    let dist_taskkind = WeightedIndex::new(&[3, 7]).unwrap();
+    let dist_taskkind = WeightedIndex::new(&[7, 3]).unwrap();
     let mut arrival_time_offset_20ms = 0;
 
     for id in 1..=tasks_total {
@@ -53,7 +55,7 @@ fn main() {
 
         let duration = Duration::from_millis(200);
 
-        let arrival_time = arrival_time_0 + Duration::from_millis(20 * arrival_time_offset_20ms);
+        let arrival_time = arrival_time_0 + Duration::from_millis(10 * arrival_time_offset_20ms);
         arrival_time_offset_20ms += 1;
 
         tasks.push(Task{
