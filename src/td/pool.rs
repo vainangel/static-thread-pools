@@ -4,6 +4,7 @@ use std::sync::mpsc;
 use std::sync::{Arc, Mutex};
 use std::thread; 
 use std::time::Duration;
+use std::collections::VecDeque;
 
 use crate::td::task::{Task, TaskKind};
 
@@ -237,7 +238,7 @@ pub struct DynamicWorkerPool {
     rq_tx: mpsc::Sender<Option<Task>>,
     pub load: Arc<Mutex<usize>>,
     start: SystemTime,
-    task_queue: Arc<Mutex<PriorityQueue<Task, TaskKind>>>,
+    task_queue: Arc<Mutex<VecDeque<Task>>>,
 }
 
 impl DynamicWorkerPool {
@@ -246,7 +247,7 @@ impl DynamicWorkerPool {
 
         let (tx, rx) = mpsc::channel();
         let rx = Arc::new(Mutex::new(rx));
-        let task_queue = Arc::new(Mutex::new(PriorityQueue::new()));
+        let task_queue = Arc::new(Mutex::new(VecDeque::new()));
 
         let (rq_tx, rq_rx) = mpsc::channel();
         let queue = task_queue.clone();
@@ -256,7 +257,7 @@ impl DynamicWorkerPool {
 
             if let Some(returned_task) = returned_task {
                 println!("Unfinished task {:?} returned to task pool.", returned_task.id);
-                queue.lock().unwrap().push(returned_task.clone(), returned_task.kind);
+                queue.lock().unwrap().push_back(returned_task.clone());
             } else {
                 break;
             }
@@ -279,14 +280,14 @@ impl DynamicWorkerPool {
     }
 
     pub fn execute_task(&mut self, task: Task) {
-        self.task_queue.lock().unwrap().push(task.clone(), task.kind);
+        self.task_queue.lock().unwrap().push_back(task.clone());
 
-        let (task, kind) = self.task_queue.lock().unwrap().pop().unwrap();
-        while *self.load.lock().unwrap() + kind.get_load() > 100 {
+        let task = self.task_queue.lock().unwrap().pop_front().unwrap();
+        while *self.load.lock().unwrap() + task.kind.get_load() > 100 {
             // ...
         }
 
-        *self.load.lock().unwrap() += kind.get_load();
+        *self.load.lock().unwrap() += task.kind.get_load();
         println!("Load: {:?}", self.load.lock().unwrap().clone());
         self.tx.send(Some(task)).unwrap();
     }
@@ -300,12 +301,12 @@ impl DynamicWorkerPool {
                 break; 
             }
 
-            while let Some((task, kind)) = self.task_queue.lock().unwrap().pop() {
-                while *self.load.lock().unwrap() + kind.get_load() > 100 {
+            while let Some(task) = self.task_queue.lock().unwrap().pop_front() {
+                while *self.load.lock().unwrap() + task.kind.get_load() > 100 {
                     // ...
                 }
 
-                *self.load.lock().unwrap() += kind.get_load();
+                *self.load.lock().unwrap() += task.kind.get_load();
                 self.tx.send(Some(task)).unwrap();
             }
         }
