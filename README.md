@@ -25,6 +25,18 @@ python3 run_tests.py
 
 > The command usage provided is unix-specific, and is only guaranteed to work on Mac or Linux. If you want to do this on Windows it's probably the same, though.
 
+# Parameter Configuration
+Some parameters can be configured for the tests without modifying the source code, such as the number of tasks to be executed.
+
+```sh
+TASKS=100 cargo run --no-default-features --features dynamic_pool
+```
+
+## Parameters
+| Parameters  | Usage                           |
+| ----------- | ------------------------------- |
+| `TASKS`     | How many tasks to generate.     |
+
 # Dependencies
 - Cargo
 - Python 3.11 or later 
