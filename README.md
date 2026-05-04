@@ -29,13 +29,15 @@ python3 run_tests.py
 Some parameters can be configured for the tests without modifying the source code, such as the number of tasks to be executed.
 
 ```sh
-TASKS=100 cargo run --no-default-features --features dynamic_pool
+TASKS=100 DIST=1:1 DURATION_UNIFORM=0 ARRIVAL_TIME_UNIFORM=1 cargo run --no-default-features --features dynamic_pool
 ```
 
 ## Parameters
-| Parameters  | Usage                           |
-| ----------- | ------------------------------- |
-| `TASKS`     | How many tasks to generate.     |
+| Parameters             | Syntax                                   | Usage                                                  | Default       |
+| ---------------------- | ---------------------------------------- | ------------------------------------------------------ | ------------- |
+| `TASKS`                | `{unsigned integer}`                     | How many tasks to generate                             | 1000          |
+| `DIST`                 | `{unsigned integer}:{unsigned integer}`  | Distribution ratio of task kind (DIST={CPU}:{IO})      | 7:3           |
+| `DURATION_UNIFORM`     | `1` (or any non-zero value) or `0`       | Whether to use uniform durations or varying durations  | 1             |
 
 # Dependencies
 - Cargo
