@@ -61,15 +61,23 @@ fn main() {
                 _ => Err("Format of parameter DIST is invalid (should be x:y)")
             }
         },
-        _ => Ok(WeightedIndex::new(&[7, 3]).unwrap())
+        _ => Ok(WeightedIndex::new(&[7, 3]).unwrap()),
     }.unwrap();
+
+    let use_uniform_durations = match env::var("UNIFORM_DURATION") {
+        Ok(value) => value != "0",
+        _ => true,
+    };
 
     let mut arrival_time_offset_20ms = 0;
 
     for id in 1..=tasks_total {
         let kind = vec![TaskKind::CPU, TaskKind::IO][dist_taskkind.sample(&mut rng)].clone();
 
-        let duration = Duration::from_millis(200);
+        let duration = match use_uniform_durations {
+            true => Duration::from_millis(200),
+            false => Duration::from_millis(rng.random_range(100..1000))
+        };
 
         let arrival_time = arrival_time_0 + Duration::from_millis(10 * arrival_time_offset_20ms);
         arrival_time_offset_20ms += 1;
