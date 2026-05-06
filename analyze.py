@@ -33,10 +33,13 @@ if __name__ == '__main__':
 
     print("ID\tKind\tWT (s)\tTAT (s)")
     for task_kind, task_id, wait_time_s, turnaround_time_s in matches:
-        print(f"{task_id}\t{task_kind}\t{wait_time_s:.3}s\t{turnaround_time_s:.3}s")
+        print(f"{task_id}\t{task_kind}\t{abs(wait_time_s):.3f}s\t{abs(turnaround_time_s):.3f}s")
     print("ID\tKind\tWT (s)\tTAT (s)")
 
-    wait_time_s_avg = sum([t[2] for t in matches]) / len(matches)
+    wait_times_s = [t[2] for t in matches]
+    wait_time_max_s = max(wait_times_s)
+    wait_time_s_avg = sum(wait_times_s) / len(wait_times_s)
+
     turnaround_time_s_avg = sum([t[3] for t in matches]) / len(matches)
     burst_time_s_avg = sum([t[3] - t[2] for t in matches]) / len(matches)
     makespan = re.search(r"Finished\sall\sjobs\sin\s([0-9.]+)", s).group(1);
@@ -44,8 +47,9 @@ if __name__ == '__main__':
     print(f"Total tasks:        \t{len(matches)}")
     print(f"      (CPU):        \t{len([t for t in matches if t[0] == 'CPU'])}")
     print(f"       (IO):        \t{len([t for t in matches if t[0] == 'IO'])}")
-    print(f"Average wait time:  \t{wait_time_s_avg:.3}s")
-    print(f"Average turnaround: \t{turnaround_time_s_avg:.3}s")
-    print(f"Average burst time: \t{burst_time_s_avg:.3}s")
+    print(f"Average wait time:  \t{wait_time_s_avg:.4f}s")
+    print(f"Maximum wait time:  \t{wait_time_max_s:.4f}s")
+    print(f"Average turnaround: \t{turnaround_time_s_avg:.3f}s")
+    print(f"Average burst time: \t{burst_time_s_avg:.3f}s")
     print(f"Makespan:           \t{makespan}s")
     print(f"Avg. load:          \t{load_avg_match.group(1)}")
