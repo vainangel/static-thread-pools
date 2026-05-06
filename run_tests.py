@@ -21,8 +21,7 @@ def run_task(command, progress, task_id, stop_event, error_list, output_file=Non
 
     try:
         if output_file:
-            # Open in append mode to match the 'tee -a' behavior
-            out_handle = open(output_file, "a")
+            out_handle = open(output_file, "w")
             err_handle = out_handle # This mimics '2>&1'
 
         process = subprocess.Popen(
