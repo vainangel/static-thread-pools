@@ -13,7 +13,9 @@ cargo run --no-default-features --features dynamic_pool # runs the round robin s
 ```
 
 To summarize the data:
+
 ```sh
+python3 -m pip install -r requirements.txt
 cargo run --no-default-features --features <type> > out.txt
 python3 analyze.py out.txt > results_<type>.txt
 ```
