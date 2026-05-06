@@ -1,5 +1,5 @@
 # Systems Programming Final Project - Worker Pools
-This project explores two types of task scheduling methods. The project constraints are simplified insofar that task quanta are fixed (to 200ms) so advanced task scheduling algorithms (which, in general, assign quanta to tasks dynamically) are not necessary to implement to optimize scheduling.
+This project explores two types of task scheduling methods. The project constraints are simplified insofar that task times are fixed (to 200ms) so advanced task scheduling algorithms (which, in general, execute tasks with indeterminate execution durations/loads) are not necessary to implement to optimize scheduling.
 
 This project implements:
 - A FIFO pool: Tasks are unqueued as soon as (possible as) they're queued 
@@ -29,7 +29,7 @@ python3 run_tests.py
 Some parameters can be configured for the tests without modifying the source code, such as the number of tasks to be executed.
 
 ```sh
-TASKS=100 DIST=1:1 UNIFORM_DURATION=0 ARRIVAL_TIME_UNIFORM=1 cargo run --no-default-features --features dynamic_pool
+TASKS=100 DIST=1:1 UNIFORM_DURATION=0 cargo run --no-default-features --features dynamic_pool
 ```
 
 ## Parameters
