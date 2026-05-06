@@ -79,7 +79,7 @@ fn main() {
             false => Duration::from_millis(rng.random_range(100..1000))
         };
 
-        let arrival_time = arrival_time_0 + Duration::from_millis(10 * arrival_time_offset_20ms);
+        let arrival_time = arrival_time_0 + Duration::from_millis(20 * arrival_time_offset_20ms);
         arrival_time_offset_20ms += 1;
 
         tasks.push(Task{
