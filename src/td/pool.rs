@@ -61,6 +61,12 @@ impl Worker {
 
 use std::time::{SystemTime};
 
+pub trait TaskScheduler {
+    fn new(n_workers: usize) -> Self;
+    fn execute_task(&mut self, task: Task);
+    fn await_remaining_tasks(&mut self);
+}
+
 pub struct WorkerPool {
     workers: Vec<Worker>,
     sender: mpsc::Sender<Option<Task>>,
@@ -69,8 +75,8 @@ pub struct WorkerPool {
     pub load: Arc<Mutex<usize>>,
 }
 
-impl WorkerPool {
-    pub fn new(n_workers: usize) -> Self {
+impl TaskScheduler for WorkerPool {
+    fn new(n_workers: usize) -> Self {
         assert!(n_workers > 0);
 
         let (tx, rx) = mpsc::channel();
@@ -87,7 +93,7 @@ impl WorkerPool {
         WorkerPool{ workers, sender: tx, start: SystemTime::now(), load }
     }
 
-    pub fn execute_task(&self, task: Task) {
+    fn execute_task(&mut self, task: Task) {
         // wait until resource is available 
         while *self.load.lock().unwrap() + task.kind.get_load() > 100 {
             // ...
@@ -98,7 +104,7 @@ impl WorkerPool {
         self.sender.send(Some(task)).unwrap();
     }
 
-    pub fn await_remaining_tasks(&mut self) {
+    fn await_remaining_tasks(&mut self) {
         println!("Finishing remaining tasks...");
 
         while *self.load.lock().unwrap() > 0 {
@@ -241,8 +247,8 @@ pub struct DynamicWorkerPool {
     task_queue: Arc<Mutex<VecDeque<Task>>>,
 }
 
-impl DynamicWorkerPool {
-    pub fn new(n_workers: usize) -> Self {
+impl TaskScheduler for DynamicWorkerPool {
+    fn new(n_workers: usize) -> Self {
         println!("Building dynamic worker pool.");
 
         let (tx, rx) = mpsc::channel();
@@ -279,7 +285,7 @@ impl DynamicWorkerPool {
         DynamicWorkerPool{ workers, tx, rq_tx, load, start, task_queue }
     }
 
-    pub fn execute_task(&mut self, task: Task) {
+    fn execute_task(&mut self, task: Task) {
         self.task_queue.lock().unwrap().push_back(task.clone());
 
         let task = self.task_queue.lock().unwrap().pop_front().unwrap();
@@ -292,7 +298,7 @@ impl DynamicWorkerPool {
         self.tx.send(Some(task)).unwrap();
     }
 
-    pub fn await_remaining_tasks(&mut self) {
+    fn await_remaining_tasks(&mut self) {
         println!("Finishing remaining tasks...");
 
         loop {
