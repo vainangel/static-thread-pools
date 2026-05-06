@@ -200,7 +200,7 @@ impl DynamicWorker {
     pub fn get_id(&self) -> usize { self.id }
 
     // TODO: replace load mutex with AtomicUsize ? 
-    pub fn new(id: usize, mediator: TaskMediator) -> Self {
+    fn new(id: usize, mediator: TaskMediator) -> Self {
 
         let listen_for_tasks = move || loop {
             let task_handle = mediator.get_pending_task(); 
@@ -265,7 +265,7 @@ impl DynamicWorkerPool {
 
         let load = Arc::new(Mutex::new(0 as usize));
 
-        const QUANTA: Duration = Duration::from_millis(50);
+        const QUANTA: Duration = Duration::from_millis(40);
 
         let mut workers = Vec::with_capacity(n_workers);
         for id in 1..=workers.capacity() {
