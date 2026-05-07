@@ -25,6 +25,11 @@ To automate this process for all implementation tests:
 python3 run_tests.py
 ```
 
+To generate graphs:
+```sh
+python3 make_graphs.py out_<test>.txt
+```
+
 > The command usage provided is unix-specific, and is only guaranteed to work on Mac or Linux. If you want to do this on Windows it's probably the same, though.
 
 # Parameter Configuration
