@@ -2,6 +2,8 @@ import pathlib
 from pathlib import Path 
 import re
 import sys
+import matplotlib.pyplot as plt 
+import numpy as np 
 
 # TODO: Needed data:
 # total tasks completed
@@ -31,11 +33,12 @@ if __name__ == '__main__':
         t = matches[i]
         matches[i] = (t[0], int(t[1]), float(t[3]) - float(t[2]), float(t[3]))
 
-    print("ID\tKind\tWT (s)\tTAT (s)")
-    for task_kind, task_id, wait_time_s, turnaround_time_s in matches:
-        print(f"{task_id}\t{task_kind}\t{abs(wait_time_s):.3f}s\t{abs(turnaround_time_s):.3f}s")
-    print("ID\tKind\tWT (s)\tTAT (s)")
+    #print("ID\tKind\tWT (s)\tTAT (s)")
+    #for task_kind, task_id, wait_time_s, turnaround_time_s in matches:
+    #    print(f"{task_id}\t{task_kind}\t{abs(wait_time_s):.3f}s\t{abs(turnaround_time_s):.3f}s")
+    #print("ID\tKind\tWT (s)\tTAT (s)")
 
+    
     wait_times_s = [t[2] for t in matches]
     wait_time_max_s = max(wait_times_s)
     wait_time_s_avg = sum(wait_times_s) / len(wait_times_s)
@@ -44,12 +47,16 @@ if __name__ == '__main__':
     burst_time_s_avg = sum([t[3] - t[2] for t in matches]) / len(matches)
     makespan = re.search(r"Finished\sall\sjobs\sin\s([0-9.]+)", s).group(1);
 
-    print(f"Total tasks:        \t{len(matches)}")
-    print(f"      (CPU):        \t{len([t for t in matches if t[0] == 'CPU'])}")
-    print(f"       (IO):        \t{len([t for t in matches if t[0] == 'IO'])}")
-    print(f"Average wait time:  \t{wait_time_s_avg:.4f}s")
-    print(f"Maximum wait time:  \t{wait_time_max_s:.4f}s")
-    print(f"Average turnaround: \t{turnaround_time_s_avg:.3f}s")
-    print(f"Average burst time: \t{burst_time_s_avg:.3f}s")
-    print(f"Makespan:           \t{makespan}s")
-    print(f"Avg. load:          \t{load_avg_match.group(1)}")
+    fig, ax = plt.subplots()
+
+    task_labels = [i+1 for i in range(len(matches))]
+    turnaround_per_task_s = [t[3] for t in matches]
+    ax.bar(task_labels, turnaround_per_task_s)
+    ax.set_ylabel("TAT (s)")
+    ax.set_xlabel("Task (ID) in order of arrival time")
+    ax.set_title("Turnaround time per task")
+
+    plt_out = str(filepath).replace(filepath.suffix, ".png")
+    plt.savefig(plt_out)
+    print(f"Plot saved to {plt_out}")
+
