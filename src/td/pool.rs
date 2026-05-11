@@ -271,7 +271,7 @@ impl TaskScheduler for DynamicWorkerPool {
 
         let load = Arc::new(Mutex::new(0 as usize));
 
-        const QUANTA: Duration = Duration::from_millis(40);
+        const QUANTA: Duration = Duration::from_millis(80);
 
         let mut workers = Vec::with_capacity(n_workers);
         for id in 1..=workers.capacity() {
