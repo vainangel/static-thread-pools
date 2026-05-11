@@ -61,7 +61,7 @@ fn main() {
                 _ => Err("Format of parameter DIST is invalid (should be x:y)")
             }
         },
-        _ => Ok(WeightedIndex::new(&[7, 3]).unwrap()),
+        _ => Ok(WeightedIndex::new(&[3, 7]).unwrap()),
     }.unwrap();
 
     let use_uniform_durations = match env::var("UNIFORM_DURATION") {

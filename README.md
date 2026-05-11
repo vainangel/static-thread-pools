@@ -43,7 +43,7 @@ TASKS=100 DIST=1:1 UNIFORM_DURATION=0 cargo run --no-default-features --features
 | Parameters             | Syntax                                   | Usage                                                  | Default       |
 | ---------------------- | ---------------------------------------- | ------------------------------------------------------ | ------------- |
 | `TASKS`                | `{unsigned integer}`                     | How many tasks to generate                             | 1000          |
-| `DIST`                 | `{unsigned integer}:{unsigned integer}`  | Distribution ratio of task kind (DIST={CPU}:{IO})      | 7:3           |
+| `DIST`                 | `{unsigned integer}:{unsigned integer}`  | Distribution ratio of task kind (DIST={CPU}:{IO})      | 3:7           |
 | `UNIFORM_DURATION`     | `1` (or any non-zero value) or `0`       | Whether to use uniform durations or varying durations  | 1             |
 
 # Dependencies
